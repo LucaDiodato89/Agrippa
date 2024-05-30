@@ -1,2 +1,2 @@
-# brainf-ckJavaInterpreter
-A simple interpreter for the esoteric Brainf*ck programming language, written in Java
+# Agrippa
+A Java-based interpreter for the esoteric programming language brainfuck
