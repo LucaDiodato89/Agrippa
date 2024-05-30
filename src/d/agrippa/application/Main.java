@@ -1,4 +1,4 @@
-package diodato.brainfuckjavainterpreter.application;
+package d.agrippa.application;
 
 public class Main {
 
