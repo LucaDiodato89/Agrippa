@@ -2,28 +2,30 @@ package d.agrippa.application;
 
 import java.util.Scanner;
 
+import d.agrippa.Interpreter;
+import d.agrippa.exception.AgrippaException;
+
 public class Main {
 
 	public static void main(String[] args) {
 
 		System.out.println("---BEGIN---");
 		
+
 		String zerozerothirty = """
 				>>>
 				>++++++[<+++++>-]
 				""";
+		String helloWorld = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
+		String testOne = "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.";
+		Interpreter interpreter = new Interpreter();
 		
-		
-		System.out.println("Inserisci un carattere ascii 255 etc etc");
-		Scanner scanner = new Scanner(System.in);
-		String inputline = scanner.nextLine();
-		char input = inputline.charAt(0);
-		
-		int memory = (int) input;
-		char output = (char) memory;
-        System.out.println("In memoria: " + memory);
-        System.out.println("In output: " +output);
-		
+		try {
+			interpreter.interpret(helloWorld.toCharArray(), 1, 1);;
+		} catch (AgrippaException ex) {
+			ex.printStackTrace();
+		}
+		System.out.println("");
 		System.out.println("---END---");
 
 	}

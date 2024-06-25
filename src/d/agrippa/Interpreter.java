@@ -3,6 +3,7 @@ package d.agrippa;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -59,35 +60,44 @@ public class Interpreter {
         		}
         		case '+' -> {
         			//Increment the byte at the data pointer by one
-        			memory[dataPointer] = (memory[dataPointer] + 1) % 255;
+        			memory[dataPointer] = Math.floorMod(memory[dataPointer] + 1, Constants.MODULE);
         			instructionPointer++;
         		}
         		case '-' -> {
         			//Decrement the byte at the data pointer by one
-        			if (memory[dataPointer]==0)
-        				memory[dataPointer] = 255;
-        			else
-        				memory[dataPointer] = memory[dataPointer] - 1;
+        			memory[dataPointer] = Math.floorMod(memory[dataPointer] - 1, Constants.MODULE);
         			instructionPointer++;
         		}
         		case '.' -> {
         			// 	Output the byte at the data pointer
         			char output = (char) memory[dataPointer];
-                    System.out.print(output);
+                    System.out.print( output);
                     instructionPointer++;
         		}
         		case ',' -> {
         			//Accept one byte of input, storing its value in the byte at the data pointer
-        			
-        			//TODO Implement
+        			System.out.println("Insert a byte of input:");
+        			String lineInput = scanner.nextLine();
+        			char characterInput = lineInput.charAt(0);
+        			int integerInput = (int) characterInput;
+        			memory[dataPointer] = integerInput;
+        			instructionPointer++;
         		}
         		case '[' -> {
         			//If the byte at the data pointer is zero, then instead of moving the instruction pointer forward to the next command,
         			//jump it forward to the command after the matching ] command
+        			if (memory[dataPointer] == 0) {
+        				instructionPointer = skipToClosing(instructionPointer, parenthesisMap);
+        			}
+        			instructionPointer++;
         		}
         		case ']' -> {
         			//If the byte at the data pointer is nonzero, then instead of moving the instruction pointer forward to the next command,
         			//jump it back to the command after the matching [ command
+        			if (memory[dataPointer] != 0) {
+        				instructionPointer = skipToOpening(instructionPointer, parenthesisMap);
+        			}
+        			instructionPointer++;
         		}
         		default -> {
         			//Ignores every other character
@@ -102,6 +112,7 @@ public class Interpreter {
         	
         }
         
+        scanner.close();
         machineReset();
               
     }
@@ -125,14 +136,11 @@ public class Interpreter {
         try {
         
             for (int i = 0; i <code.length; i++) {
-
                 if (code[i]=='['){
                     stack.push(i);
                 } else if (code[i]==']'){
                     result.put(stack.pop(), i); 
                 }
-
-
             }
         
             if (!stack.empty())
@@ -141,18 +149,27 @@ public class Interpreter {
         } catch (EmptyStackException e) {
             throw new AgrippaException(Constants.UNBALANCED_PARENTHESIS_ERROR_MESSAGE);
         }
-        
         return result;
     }
     
   //TODO implement,
-    private int skipToClosing () {
-        return 1;
+    private int skipToClosing (int openingPosition, Map<Integer, Integer> bracketsMap) throws AgrippaException {
+    	
+    	for  (int value : bracketsMap.keySet()) {
+    		if (value == openingPosition)
+    			return bracketsMap.get(openingPosition);
+    	}
+        throw new AgrippaException("Write error message");
     }
     
   //TODO implement,
-    private int skipToOpening () {
-        return 2;
+    private int skipToOpening (int closingPosition, Map<Integer, Integer> bracketsMap) throws AgrippaException {
+    	
+    	for  (Entry<Integer, Integer> entry : bracketsMap.entrySet()) {
+    		if (entry.getValue() == closingPosition)
+    			return entry.getKey();
+    	}
+    	throw new AgrippaException("Write error message");
     }
 	
     //TODO implement, print cells and pointers
@@ -162,9 +179,11 @@ public class Interpreter {
 		
 	}
 
+	//TODO implement
 	private boolean isStatusToBePrinted (int frequency, int size) {
 		
-		return frequency > 0 && size > 0;
+		return false;
+		//return frequency > 0 && size > 0;
 		
 	}
 	
