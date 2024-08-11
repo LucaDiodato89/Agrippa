@@ -17,11 +17,18 @@ public class Main {
 				>++++++[<+++++>-]
 				""";
 		String helloWorld = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
-		String testOne = "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.";
-		Interpreter interpreter = new Interpreter();
+		String helloWorldTwo = """
+				>++++++++[-<+++++++++>]<.>>+>-[+]++>++>+++[>[->+++<<+++>]<<]>-----.>->
+				+++..+++.>-.<<+[>[+>+]>>]<--------------.>>.+++.------.--------.>+.>+.
+				""";
+		String test = "[]++++++++++[>>+>+>++++++[<<+<+++>>>-]<<<<-].>.>.>.>.>.";
+		String debugH = "[]++++++++++[>>+>+>++++++[<<+<+++>>>-]<<<<-]    \"A*$\";?@![#>>+<<]>[>>]<<<<[>++<[-]]>.>.";
+		String debugHclean = "[]++++++++++[>>+>+>++++++[<<+<+++>>>-]<<<<-][>>+<<]>[>>]<<<<[>++<[-]]>.>";
 		
+		Interpreter interpreter = new Interpreter();
+
 		try {
-			interpreter.interpret(helloWorld.toCharArray(), 1, 1);;
+			interpreter.interpret(debugH.toCharArray(), 1, 1);
 		} catch (AgrippaException ex) {
 			ex.printStackTrace();
 		}

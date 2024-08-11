@@ -32,6 +32,7 @@ public class Interpreter {
         this.instructionPointer = 0;
     }
     
+    //TODO Implement
     public void interpret (char[] code) {
     	
     }
@@ -39,7 +40,10 @@ public class Interpreter {
     
     public void interpret (char[] code, int printMemoryStatusFrequency, int printMemoryStatusSize) throws AgrippaException {
     	
+    	//TODO Check pmsSize > this.memory.size -> throw exception
+    	
     	boolean printStatusFlag = isStatusToBePrinted(printMemoryStatusFrequency, printMemoryStatusSize);
+    	
     	int stepCounter = 0;
         
         Map<Integer, Integer> parenthesisMap = mapBrackets(code);
@@ -69,14 +73,14 @@ public class Interpreter {
         			instructionPointer++;
         		}
         		case '.' -> {
-        			// 	Output the byte at the data pointer
+        			// Output the byte at the data pointer
         			char output = (char) memory[dataPointer];
                     System.out.print( output);
                     instructionPointer++;
         		}
         		case ',' -> {
         			//Accept one byte of input, storing its value in the byte at the data pointer
-        			System.out.println("Insert a byte of input:");
+        			System.out.print("Insert a byte of input: ");
         			String lineInput = scanner.nextLine();
         			char characterInput = lineInput.charAt(0);
         			int integerInput = (int) characterInput;
@@ -101,10 +105,13 @@ public class Interpreter {
         		}
         		default -> {
         			//Ignores every other character
-        		}
+        			instructionPointer++;
+        		}        		
         	}
         	
-        	//Check if to print status
+        	//TODO move instruction pointer here
+        	//TODO increase step counter
+        	//TODO check if to print status
         	if (printStatusFlag) {
         		//TODO Implement
         		;
@@ -152,7 +159,6 @@ public class Interpreter {
         return result;
     }
     
-  //TODO implement,
     private int skipToClosing (int openingPosition, Map<Integer, Integer> bracketsMap) throws AgrippaException {
     	
     	for  (int value : bracketsMap.keySet()) {
@@ -162,7 +168,7 @@ public class Interpreter {
         throw new AgrippaException("Write error message");
     }
     
-  //TODO implement,
+    
     private int skipToOpening (int closingPosition, Map<Integer, Integer> bracketsMap) throws AgrippaException {
     	
     	for  (Entry<Integer, Integer> entry : bracketsMap.entrySet()) {
@@ -179,7 +185,7 @@ public class Interpreter {
 		
 	}
 
-	//TODO implement
+	//TODO decide logic and implement
 	private boolean isStatusToBePrinted (int frequency, int size) {
 		
 		return false;
