@@ -2,6 +2,7 @@ package d.agrippa;
 
 import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -17,8 +18,6 @@ public class Interpreter {
     int dataPointer;
     
     int instructionPointer;
-    
-    //Map<Integer, Integer> brackets;
 
     public Interpreter () {
         this.memory = new int[Constants.DEFAULT_MEMORY_SIZE];
@@ -32,17 +31,16 @@ public class Interpreter {
         this.instructionPointer = 0;
     }
     
-    //TODO Implement
-    public void interpret (char[] code) {
-    	
+    public void interpret (char[] code) throws AgrippaException{
+    	this.interpret(code, -1, -1);
     }
-    
     
     public void interpret (char[] code, int printMemoryStatusFrequency, int printMemoryStatusSize) throws AgrippaException {
     	
-    	//TODO Check pmsSize > this.memory.size -> throw exception
-    	
     	boolean printStatusFlag = isStatusToBePrinted(printMemoryStatusFrequency, printMemoryStatusSize);
+    	
+    	if (printStatusFlag && printMemoryStatusSize > memory.length)
+    		throw new AgrippaException(Constants.ATTEMPT_AT_PRINTING_OUT_OF_BOUNDS_ERROR_MESSAGE);
     	
     	int stepCounter = 0;
         
@@ -55,28 +53,23 @@ public class Interpreter {
         		case '>' -> {
         			//Increment the data pointer by one (to point to the next cell to the right)
         			dataPointer++;
-        			instructionPointer++;
         		}
         		case '<' -> {
         			//Decrement the data pointer by one (to point to the next cell to the left)
         			dataPointer--;
-        			instructionPointer++;
         		}
         		case '+' -> {
         			//Increment the byte at the data pointer by one
         			memory[dataPointer] = Math.floorMod(memory[dataPointer] + 1, Constants.MODULE);
-        			instructionPointer++;
         		}
         		case '-' -> {
         			//Decrement the byte at the data pointer by one
         			memory[dataPointer] = Math.floorMod(memory[dataPointer] - 1, Constants.MODULE);
-        			instructionPointer++;
         		}
         		case '.' -> {
         			// Output the byte at the data pointer
         			char output = (char) memory[dataPointer];
                     System.out.print( output);
-                    instructionPointer++;
         		}
         		case ',' -> {
         			//Accept one byte of input, storing its value in the byte at the data pointer
@@ -85,7 +78,6 @@ public class Interpreter {
         			char characterInput = lineInput.charAt(0);
         			int integerInput = (int) characterInput;
         			memory[dataPointer] = integerInput;
-        			instructionPointer++;
         		}
         		case '[' -> {
         			//If the byte at the data pointer is zero, then instead of moving the instruction pointer forward to the next command,
@@ -93,7 +85,6 @@ public class Interpreter {
         			if (memory[dataPointer] == 0) {
         				instructionPointer = skipToClosing(instructionPointer, parenthesisMap);
         			}
-        			instructionPointer++;
         		}
         		case ']' -> {
         			//If the byte at the data pointer is nonzero, then instead of moving the instruction pointer forward to the next command,
@@ -101,27 +92,25 @@ public class Interpreter {
         			if (memory[dataPointer] != 0) {
         				instructionPointer = skipToOpening(instructionPointer, parenthesisMap);
         			}
-        			instructionPointer++;
         		}
         		default -> {
         			//Ignores every other character
-        			instructionPointer++;
         		}        		
         	}
+        	instructionPointer++;
         	
-        	//TODO move instruction pointer here
-        	//TODO increase step counter
-        	//TODO check if to print status
         	if (printStatusFlag) {
-        		//TODO Implement
-        		;
+        		stepCounter++;
+        		if (stepCounter == printMemoryStatusFrequency) {
+        			stepCounter = 0;
+        			printMemoryStatus(printMemoryStatusSize);
+        		}
         	}
-        	
         }
         
         scanner.close();
         machineReset();
-              
+        
     }
     
     private void machineReset () {
@@ -135,7 +124,7 @@ public class Interpreter {
                 
     }
     
-    public Map<Integer, Integer> mapBrackets (char[] code) throws AgrippaException {
+    private Map<Integer, Integer> mapBrackets (char[] code) throws AgrippaException {
         
         Map<Integer, Integer> result = new HashMap<>();
         Stack<Integer> stack = new Stack<>();
@@ -178,18 +167,18 @@ public class Interpreter {
     	throw new AgrippaException("Write error message");
     }
 	
-    //TODO implement, print cells and pointers
 	private void printMemoryStatus (int range) {
-		for (int i = 0; i < range; i++)
-			System.out.println();
-		
+		System.out.print("|");
+		for (int i = 0; i < range; i++) {
+			String formatted = String.format(Locale.ENGLISH, "%03d", memory[i]);
+			System.out.print(formatted+"|");
+		}
+		System.out.print("\n");
 	}
 
-	//TODO decide logic and implement
 	private boolean isStatusToBePrinted (int frequency, int size) {
 		
-		return false;
-		//return frequency > 0 && size > 0;
+		return frequency > 0 && size > 0;
 		
 	}
 	

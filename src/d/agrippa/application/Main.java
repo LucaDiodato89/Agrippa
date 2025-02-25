@@ -28,7 +28,7 @@ public class Main {
 		Interpreter interpreter = new Interpreter();
 
 		try {
-			interpreter.interpret(debugH.toCharArray(), 1, 1);
+			interpreter.interpret(debugH.toCharArray(), 1, 20);
 		} catch (AgrippaException ex) {
 			ex.printStackTrace();
 		}
